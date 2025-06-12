@@ -1,4 +1,4 @@
 Santiago Andrés Durán González
-Sntiago Herrera Parra
+Santiago Herrera Parra
 Laura Castro
 Cristian Perez
