@@ -6,6 +6,8 @@ public class Tarea {
     private Boolean completion;
     private String Categoria;
     private int idProyecto;
+    private int edad;
+   
     
     public void crear(){
         
