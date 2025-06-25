@@ -11,4 +11,7 @@ public class Usuario {
     public boolean autentificar(){
         
     }
+    public boolean registrar () {
+        
+    }
 }
