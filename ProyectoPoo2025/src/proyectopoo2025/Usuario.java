@@ -14,4 +14,7 @@ public class Usuario {
     public boolean registrar () {
         
     }
+    public void actualzarPerfil(){
+        
+    }
 }
