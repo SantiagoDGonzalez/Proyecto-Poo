@@ -7,6 +7,12 @@ public class Usuario {
     private String contraseña;
     private String email;
     
+    Usuario (int id, String nombreUsuario, String contraseña, String email){
+        this.id = id;
+        this.nombreUsuario = nombreUsuario;
+        this.contraseña = contraseña;
+        this.email = email;
+    }
     
     public boolean autentificar(){
         
