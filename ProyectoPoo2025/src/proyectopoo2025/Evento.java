@@ -1,13 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package proyectopoo2025;
-
-/**
- *
- * @author crist
- */
 public class Evento {
+    private int id;
+    private String titulo;
+    private String Categoria;
+    private String Duration;
     
+    public void crear(){
+        
+    }
+    public void actualizar(){
+        
+    }
+    public void eliminar(){
+        
+    }
+    public void establecerRecordatorio(){
+        
+    }
+
+    public String getDuration() {
+        return Duration;
+    }
+    
+   
 }
