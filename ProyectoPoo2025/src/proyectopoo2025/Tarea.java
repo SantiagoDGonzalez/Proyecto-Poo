@@ -1,13 +1,28 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package proyectopoo2025;
 
-/**
- *
- * @author crist
- */
 public class Tarea {
+    private int id;
+    private String Titulo;
+    private Boolean completion;
+    private String Categoria;
+    private int idProyecto;
     
+    public void crear(){
+        
+    }
+    public void actualizar(){
+        
+    }
+    public void eliminar(){
+        
+    }
+    public void marcarComoCompletada(){
+
+    }
+    public void AsignarPrioridad(){
+        
+    }
+    public void asociarAproyecto(){
+        
+    }
 }
