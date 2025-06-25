@@ -7,4 +7,8 @@ public class Usuario {
     private String contraseña;
     private String email;
     
+    
+    public boolean autentificar(){
+        
+    }
 }
