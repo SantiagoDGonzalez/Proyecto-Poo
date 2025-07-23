@@ -95,7 +95,14 @@ public class Calendario extends JFrame {
 
             area.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 1) {
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        List<Tarea> tareasDia = tareasPorFecha.get(fecha);
+                        if (tareasDia != null && !tareasDia.isEmpty()) {
+                            mostrarEditorDeTareas(fecha, tareasDia);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No hay tareas o eventos para " + fecha);
+                        }
+                    } else if (e.getClickCount() == 1) {
                         String[] opciones = {"Crear Tarea", "Crear Evento", "Cancelar"};
                         int seleccion = JOptionPane.showOptionDialog(
                                 null,
@@ -111,7 +118,7 @@ public class Calendario extends JFrame {
                         if (seleccion == 0) {
                             mostrarDialogoCrearTarea(fecha);
                         } else if (seleccion == 1) {
-                            mostrarDialogoCrearEvento(fecha); 
+                            mostrarDialogoCrearEvento(fecha);
                         }
                     } else if (e.getClickCount() == 2) {
                         mostrarTareasDelDia(fecha);
@@ -255,6 +262,101 @@ public class Calendario extends JFrame {
         dialogo.setLocationRelativeTo(this);
         dialogo.setVisible(true);
     }
+    private void mostrarEditorDeTareas(LocalDate fecha, List<Tarea> tareas) {
+        JDialog dialogo = new JDialog(this, "Editar/Borrar tareas o eventos para " + fecha, true);
+        dialogo.setSize(500, 400);
+        dialogo.setLayout(new BorderLayout());
+
+        DefaultListModel<Tarea> model = new DefaultListModel<>();
+        for (Tarea t : tareas) {
+            model.addElement(t);
+        }
+
+        JList<Tarea> lista = new JList<>(model);
+        lista.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                Tarea t = (Tarea) value;
+                label.setText(String.format("%s (%s - %s)", t.getTitulo(), t.getHoraLimite(), t.getPrioridad()));
+                return label;
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(lista);
+        dialogo.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel botones = new JPanel();
+
+        JButton editarBtn = new JButton("Editar");
+        JButton eliminarBtn = new JButton("Eliminar");
+        JButton cerrarBtn = new JButton("Cerrar");
+
+        editarBtn.addActionListener(e -> {
+            Tarea seleccionada = lista.getSelectedValue();
+            if (seleccionada != null) {
+                mostrarDialogoEditarTarea(seleccionada);
+                actualizarCalendario(); // Actualiza la vista después de editar
+            }
+        });
+
+        eliminarBtn.addActionListener(e -> {
+            Tarea seleccionada = lista.getSelectedValue();
+            if (seleccionada != null) {
+                int confirm = JOptionPane.showConfirmDialog(dialogo, "¿Eliminar esta tarea/evento?",
+                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    tareas.remove(seleccionada);
+                    model.removeElement(seleccionada);
+                    actualizarCalendario();
+                }
+            }
+        });
+
+        cerrarBtn.addActionListener(e -> dialogo.dispose());
+
+        botones.add(editarBtn);
+        botones.add(eliminarBtn);
+        botones.add(cerrarBtn);
+
+        dialogo.add(botones, BorderLayout.SOUTH);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+    }
+    private void mostrarDialogoEditarTarea(Tarea tarea) {
+        JTextField tituloField = new JTextField(tarea.getTitulo());
+        JTextField descripcionField = new JTextField(tarea.getDescripcion());
+        JTextField horaField = new JTextField(tarea.getHoraLimite().toString());
+        JComboBox<Prioridad> prioridadBox = new JComboBox<>(Prioridad.values());
+        prioridadBox.setSelectedItem(tarea.getPrioridad());
+        JTextField categoriaField = new JTextField(tarea.getCategoria());
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Título:"));
+        panel.add(tituloField);
+        panel.add(new JLabel("Descripción:"));
+        panel.add(descripcionField);
+        panel.add(new JLabel("Hora límite (HH:mm):"));
+        panel.add(horaField);
+        panel.add(new JLabel("Prioridad:"));
+        panel.add(prioridadBox);
+        panel.add(new JLabel("Categoría:"));
+        panel.add(categoriaField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Editar tarea/evento",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                tarea.setTitulo(tituloField.getText());
+                tarea.setDescripcion(descripcionField.getText());
+                tarea.setHoraLimite(LocalTime.parse(horaField.getText()));
+                tarea.setPrioridad((Prioridad) prioridadBox.getSelectedItem());
+                tarea.setCategoria(categoriaField.getText());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
+        }
+    }
 }
-
-

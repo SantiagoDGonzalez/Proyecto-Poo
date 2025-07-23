@@ -72,5 +72,14 @@ public class Tarea {
     public boolean estaCompletada() {
     return estaCompletada;
 }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    
+    public void setHoraLimite(LocalTime horaLimite) { this.horaLimite = horaLimite; }
+    
+    public void setPrioridad(Prioridad prioridad) { this.prioridad = prioridad; }
+    
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
 }
