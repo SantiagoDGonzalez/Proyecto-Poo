@@ -3,6 +3,12 @@ package proyectopoo2025;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.*;
 import java.util.*;
 import java.util.List;
@@ -357,6 +363,61 @@ public class Calendario extends JFrame {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
             }
+        }
+    }
+    public void guardarTareasEnArchivo(String nombreArchivo) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nombreArchivo))) {
+            for (Map.Entry<LocalDate, List<Tarea>> entrada : tareasPorFecha.entrySet()) {
+                LocalDate fecha = entrada.getKey();
+                for (Tarea tarea : entrada.getValue()) {
+                    writer.printf("%s|%s|%s|%s|%s|%s|%s%n",
+                            fecha,
+                            tarea.getHoraLimite(),
+                            tarea.getTitulo(),
+                            tarea.getDescripcion(),
+                            tarea.getPrioridad(),
+                            tarea.getCategoria(),
+                            tarea.estaCompletada() ? "1" : "0"
+                    );
+                }
+            }
+            JOptionPane.showMessageDialog(this, "Tareas guardadas en: " + nombreArchivo);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al guardar tareas: " + e.getMessage());
+        }
+    }
+    public void cargarTareasDesdeArchivo(String nombreArchivo) {
+        File archivo = new File(nombreArchivo);
+        if (!archivo.exists()) return;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split("\\|");
+                if (partes.length != 7) continue;
+
+                LocalDate fecha = LocalDate.parse(partes[0]);
+                LocalTime hora = LocalTime.parse(partes[1]);
+                String titulo = partes[2];
+                String descripcion = partes[3];
+                Prioridad prioridad = Prioridad.valueOf(partes[4]);
+                String categoria = partes[5];
+                boolean completada = partes[6].equals("1");
+
+                Tarea tarea = new Tarea(
+                        new Random().nextInt(10000), // puedes usar el ID si lo guardas
+                        titulo,
+                        descripcion,
+                        fecha,
+                        hora,
+                        prioridad,
+                        completada,
+                        categoria
+                );
+                agregarTarea(tarea);
+            }
+        } catch (IOException | RuntimeException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar tareas: " + e.getMessage());
         }
     }
 }
