@@ -96,18 +96,76 @@ public class Calendario extends JFrame {
             area.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 1) {
-                        mostrarDialogoCrearTarea(fecha);
+                        String[] opciones = {"Crear Tarea", "Crear Evento", "Cancelar"};
+                        int seleccion = JOptionPane.showOptionDialog(
+                                null,
+                                "¿Qué deseas crear para el " + fecha + "?",
+                                "Selecciona una opción",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                opciones,
+                                opciones[0]
+                        );
+
+                        if (seleccion == 0) {
+                            mostrarDialogoCrearTarea(fecha);
+                        } else if (seleccion == 1) {
+                            mostrarDialogoCrearEvento(fecha); 
+                        }
                     } else if (e.getClickCount() == 2) {
                         mostrarTareasDelDia(fecha);
                     }
                 }
             });
 
+
             calendarPanel.add(area);
         }
 
         calendarPanel.revalidate();
         calendarPanel.repaint();
+    }
+    private void mostrarDialogoCrearEvento(LocalDate fecha) {
+        JTextField tituloField = new JTextField();
+        JTextField descripcionField = new JTextField();
+        JTextField horaInicioField = new JTextField("10:00");
+        JTextField horaFinField = new JTextField("11:00");
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Título del evento:"));
+        panel.add(tituloField);
+        panel.add(new JLabel("Descripción:"));
+        panel.add(descripcionField);
+        panel.add(new JLabel("Hora inicio (HH:mm):"));
+        panel.add(horaInicioField);
+        panel.add(new JLabel("Hora fin (HH:mm):"));
+        panel.add(horaFinField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Crear evento para " + fecha,
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                LocalTime inicio = LocalTime.parse(horaInicioField.getText());
+                LocalTime fin = LocalTime.parse(horaFinField.getText());
+
+                String infoEvento = String.format("[Evento] %s (%s - %s)", tituloField.getText(), inicio, fin);
+                Tarea evento = new Tarea(
+                        new Random().nextInt(10000),
+                        infoEvento,
+                        descripcionField.getText(),
+                        fecha,
+                        fin, 
+                        Prioridad.MEDIA,
+                        false,
+                        "Evento"
+                );
+                agregarTarea(evento);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al crear evento: " + ex.getMessage());
+            }
+        }
     }
 
     private void mostrarDialogoCrearTarea(LocalDate fecha) {
